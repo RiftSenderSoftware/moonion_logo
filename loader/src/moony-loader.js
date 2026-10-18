@@ -25,6 +25,11 @@
 
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
+  // Seeded PRNG, so the sky looks the same on every launch and after a resize
+  function random(seed) {
+    return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  }
+
   function now() { return win.performance && performance.now ? performance.now() : Date.now(); }
 
   var raf = win.requestAnimationFrame || win.webkitRequestAnimationFrame || function (cb) { return setTimeout(function () { cb(now()); }, 16); };
@@ -43,7 +48,8 @@
    * @param {number}  [opts.minDuration=1200] Minimum time on screen, ms. Avoids a flash on fast loads.
    * @param {boolean} [opts.fakeProgress=true] Bar creeps towards 90% by itself until real progress / finish().
    * @param {boolean} [opts.showPercent=true]
-   * @param {number}  [opts.stars=34]
+   * @param {number}  [opts.starDensity=1] Multiplier for the number of stars in the sky.
+   * @param {boolean} [opts.meteors=true]  Occasional shooting star.
    * @param {Function} [opts.onHidden]    Called after the fade-out, when the node is removed.
    */
   function Loader(opts) {
@@ -52,7 +58,8 @@
     this.minDuration = opts.minDuration == null ? 1200 : opts.minDuration;
     this.fakeProgress = opts.fakeProgress !== false;
     this.showPercent = opts.showPercent !== false;
-    this.starCount = opts.stars == null ? 34 : opts.stars;
+    this.starDensity = opts.starDensity == null ? 1 : opts.starDensity;
+    this.meteors = opts.meteors !== false;
     this.onHidden = opts.onHidden || null;
 
     this.real = 0;
@@ -80,14 +87,29 @@
     root.setAttribute('aria-valuemax', '100');
 
     var sky = el('div', 'ml-sky', root);
-    var seed = 7;
-    function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
-    for (var i = 0; i < this.starCount; i++) {
-      var s = el('i', 'ml-star', sky), size = 1 + rnd() * 2.2;
+    this.canvas = el('canvas', 'ml-stars', sky);
+
+    // A few brighter stars twinkle on top of the static canvas field
+    var rnd = random(3);
+    for (var i = 0; i < Math.round(14 * this.starDensity); i++) {
+      var s = el('i', 'ml-star', sky), size = 1.4 + rnd() * 1.4, dur = 2.4 + rnd() * 3;
       s.style.left = (rnd() * 100).toFixed(2) + '%';
-      s.style.top = (rnd() * 100).toFixed(2) + '%';
+      s.style.top = (Math.pow(rnd(), 1.4) * 100).toFixed(2) + '%';
       s.style.width = s.style.height = size.toFixed(1) + 'px';
-      s.style.animationDelay = s.style.webkitAnimationDelay = (-rnd() * 3.2).toFixed(2) + 's';
+      if (rnd() < 0.35) s.style.background = '#d6e4ff';
+      s.style.animationDuration = s.style.webkitAnimationDuration = dur.toFixed(2) + 's';
+      s.style.animationDelay = s.style.webkitAnimationDelay = (-rnd() * dur).toFixed(2) + 's';
+    }
+
+    if (this.meteors) {
+      var meteor = this.meteor = el('i', 'ml-meteor', sky), mr = random(5);
+      var place = function () {
+        meteor.style.left = (25 + mr() * 70).toFixed(1) + '%';
+        meteor.style.top = (mr() * 35).toFixed(1) + '%';
+      };
+      place();
+      meteor.addEventListener('animationiteration', place);
+      meteor.addEventListener('webkitAnimationIteration', place);
     }
 
     this.stage = el('div', 'ml-stage', root);
@@ -120,6 +142,10 @@
   Loader.prototype.layout = function () {
     var w = this.root.clientWidth || win.innerWidth, h = this.root.clientHeight || win.innerHeight;
     if (!w || !h) return;
+    if (w !== this._w || h !== this._h) {
+      this._w = w; this._h = h;
+      this.drawSky(w, h);
+    }
     var landscape = w / h >= LANDSCAPE_FROM, fox, col, gap;
 
     if (landscape) {
@@ -144,6 +170,67 @@
     px(this.logo, { width: col, height: col * LOGO_RATIO });
     px(this.bar, { width: barW, height: barH, marginTop: fox * 0.13 });
     px(this.pct, { fontSize: fs, marginTop: barH + fs * 0.5 });
+  };
+
+  // Static night sky on a canvas: a faint Milky Way band plus a field of stars whose sizes,
+  // brightness and colour temperature follow a natural spread (many faint, very few bright).
+  Loader.prototype.drawSky = function (w, h) {
+    var c = this.canvas, ctx = c.getContext && c.getContext('2d');
+    if (!ctx) return;
+    var dpr = Math.min(win.devicePixelRatio || 1, 2);
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+    c.style.width = w + 'px'; c.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    var rnd = random(11), area = w * h, diag = Math.sqrt(area * 2), i, x, y, r, a, g;
+    function gauss() { return (rnd() + rnd() + rnd() + rnd() - 2) / 2; } // ~N(0, 0.29)
+    var tints = ['255,255,255', '255,255,255', '214,226,255', '190,208,255', '255,236,214', '255,214,180'];
+
+    // Milky Way: diagonal band of haze, then a dense dust of tiny stars inside it
+    ctx.save();
+    ctx.translate(w * 0.5, h * 0.42);
+    ctx.rotate(-0.55);
+    for (i = 0; i < 26; i++) {
+      x = (rnd() - 0.5) * diag; y = gauss() * diag * 0.08; r = diag * (0.07 + rnd() * 0.1);
+      g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      var tint = rnd() < 0.6 ? '140,150,255' : '205,150,255';
+      g.addColorStop(0, 'rgba(' + tint + ',' + (0.06 + rnd() * 0.06).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(' + tint + ',0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+    var dust = Math.round(area / 450 * this.starDensity);
+    for (i = 0; i < dust; i++) {
+      x = (rnd() - 0.5) * diag; y = gauss() * diag * 0.1;
+      a = 0.18 + rnd() * 0.45; r = 0.5 + rnd() * 0.5;
+      ctx.fillStyle = 'rgba(' + tints[(rnd() * tints.length) | 0] + ',' + a.toFixed(2) + ')';
+      ctx.fillRect(x, y, r, r);
+    }
+    ctx.restore();
+
+    // Field stars
+    var n = Math.round(area / 700 * this.starDensity);
+    for (i = 0; i < n; i++) {
+      x = rnd() * w; y = rnd() * h;
+      var m = Math.pow(rnd(), 7);                 // magnitude: mostly faint
+      r = 0.45 + m * 1.5;
+      a = Math.min(1, 0.3 + m * 0.8 + rnd() * 0.35);
+      a *= 0.65 + 0.35 * (1 - y / h);             // slightly dimmer towards the horizon haze
+      var col = tints[(rnd() * tints.length) | 0];
+      if (r > 1.1) {
+        g = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+        g.addColorStop(0, 'rgba(' + col + ',' + (a * 0.35).toFixed(2) + ')');
+        g.addColorStop(1, 'rgba(' + col + ',0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(x - r * 5, y - r * 5, r * 10, r * 10);
+      }
+      ctx.fillStyle = 'rgba(' + col + ',' + a.toFixed(2) + ')';
+      if (r < 0.7) ctx.fillRect(x, y, r * 1.4, r * 1.4);
+      else { ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); }
+    }
+
+    if (this.meteor) this.meteor.style.width = Math.round(clamp(Math.min(w, h) * 0.28, 70, 220)) + 'px';
   };
 
   Loader.prototype.tick = function (t) {

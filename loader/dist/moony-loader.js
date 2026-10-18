@@ -7,7 +7,7 @@
   var LOGO = "data:image/png;base64,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";
   var FOX_RATIO = 1.0156;   // height / width
   var LOGO_RATIO = 0.2929; // height / width
-  var CSS = ".ml-root{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483000;overflow:hidden;background:#0d0922;background:radial-gradient(ellipse at 50% 42%,#3a2660 0%,#1d1339 46%,#0b0720 100%);font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;touch-action:none;opacity:1;-webkit-transition:opacity .5s ease;transition:opacity .5s ease}.ml-root.ml-abs{position:absolute}.ml-root *{box-sizing:border-box;margin:0;padding:0}.ml-sky{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}.ml-star{position:absolute;border-radius:50%;background:#fff4e2;box-shadow:0 0 4px rgba(255,236,205,.8);-webkit-animation:ml-twinkle 3.2s ease-in-out infinite;animation:ml-twinkle 3.2s ease-in-out infinite}.ml-stage{position:absolute;top:0;left:0;width:100%;height:100%;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-transition:-webkit-transform .5s ease;transition:transform .5s ease}.ml-stage.ml-row{-webkit-flex-direction:row;flex-direction:row}.ml-hero{position:relative;-webkit-flex:none;flex:none;-webkit-animation:ml-pop .7s cubic-bezier(.2,1.35,.4,1) both;animation:ml-pop .7s cubic-bezier(.2,1.35,.4,1) both}.ml-glow{position:absolute;left:50%;top:50%;border-radius:50%;background:radial-gradient(circle,rgba(255,140,76,.34) 0%,rgba(255,140,76,.12) 36%,rgba(255,140,76,0) 68%);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-animation:ml-glow 2.6s ease-in-out infinite;animation:ml-glow 2.6s ease-in-out infinite}.ml-shadow{position:absolute;left:50%;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 70%);-webkit-transform:translateX(-50%);transform:translateX(-50%);-webkit-animation:ml-shadow 2.6s ease-in-out infinite;animation:ml-shadow 2.6s ease-in-out infinite}.ml-fox{position:relative;display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-animation:ml-bob 2.6s ease-in-out infinite;animation:ml-bob 2.6s ease-in-out infinite}.ml-info{-webkit-flex:none;flex:none;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center}.ml-logo{display:block;pointer-events:none;-webkit-user-drag:none;-webkit-animation:ml-up .6s .15s ease-out both;animation:ml-up .6s .15s ease-out both}.ml-bar{position:relative;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);-webkit-animation:ml-up .6s .28s ease-out both;animation:ml-up .6s .28s ease-out both}.ml-fill{position:absolute;left:0;top:0;bottom:0;width:0;overflow:hidden;border-radius:999px;background:linear-gradient(90deg,#e2481c 0%,#f26a2c 55%,#ff9a48 100%);box-shadow:0 0 10px rgba(255,112,48,.6)}.ml-fill:after{content:\"\";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.38),rgba(255,255,255,0));-webkit-animation:ml-shine 1.6s linear infinite;animation:ml-shine 1.6s linear infinite}.ml-pct{color:rgba(248,244,234,.6);font-weight:600;line-height:1;letter-spacing:.14em;font-variant-numeric:tabular-nums;-webkit-animation:ml-up .6s .36s ease-out both;animation:ml-up .6s .36s ease-out both}.ml-pct.ml-hidden{display:none}.ml-root.ml-out{opacity:0;pointer-events:none}.ml-root.ml-out .ml-stage{-webkit-transform:scale(1.05);transform:scale(1.05)}@-webkit-keyframes ml-bob{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-4%)}}@keyframes ml-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4%)}}@-webkit-keyframes ml-shadow{0%,100%{-webkit-transform:translateX(-50%) scale(1);opacity:1}50%{-webkit-transform:translateX(-50%) scale(.82);opacity:.7}}@keyframes ml-shadow{0%,100%{transform:translateX(-50%) scale(1);opacity:1}50%{transform:translateX(-50%) scale(.82);opacity:.7}}@-webkit-keyframes ml-glow{0%,100%{-webkit-transform:translate(-50%,-50%) scale(1);opacity:.85}50%{-webkit-transform:translate(-50%,-50%) scale(1.07);opacity:1}}@keyframes ml-glow{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.85}50%{transform:translate(-50%,-50%) scale(1.07);opacity:1}}@-webkit-keyframes ml-pop{from{opacity:0;-webkit-transform:translateY(6%) scale(.82)}to{opacity:1;-webkit-transform:none}}@keyframes ml-pop{from{opacity:0;transform:translateY(6%) scale(.82)}to{opacity:1;transform:none}}@-webkit-keyframes ml-up{from{opacity:0;-webkit-transform:translateY(40%)}to{opacity:1;-webkit-transform:none}}@keyframes ml-up{from{opacity:0;transform:translateY(40%)}to{opacity:1;transform:none}}@-webkit-keyframes ml-shine{from{-webkit-transform:translateX(-100%)}to{-webkit-transform:translateX(260%)}}@keyframes ml-shine{from{transform:translateX(-100%)}to{transform:translateX(260%)}}@-webkit-keyframes ml-twinkle{0%,100%{opacity:.15}50%{opacity:.85}}@keyframes ml-twinkle{0%,100%{opacity:.15}50%{opacity:.85}}@media (prefers-reduced-motion:reduce){.ml-fox,.ml-shadow,.ml-glow,.ml-star,.ml-fill:after{-webkit-animation:none;animation:none}.ml-star{opacity:.5}}";
+  var CSS = ".ml-root{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483000;overflow:hidden;background:#080a1c;background:radial-gradient(ellipse 120% 45% at 50% 108%,rgba(120,72,150,.55) 0%,rgba(70,42,110,.25) 45%,rgba(40,24,70,0) 75%),linear-gradient(to bottom,#03040b 0%,#070a1d 30%,#0d1230 62%,#1a1840 86%,#261a44 100%);font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;touch-action:none;opacity:1;-webkit-transition:opacity .5s ease;transition:opacity .5s ease}.ml-root.ml-abs{position:absolute}.ml-root *{box-sizing:border-box;margin:0;padding:0}.ml-sky{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}.ml-stars{position:absolute;top:0;left:0;display:block}.ml-star{position:absolute;border-radius:50%;background:#fff6ea;box-shadow:0 0 3px 1px rgba(255,246,234,.35),0 0 8px 2px rgba(200,215,255,.12);-webkit-animation:ml-twinkle 3.2s ease-in-out infinite;animation:ml-twinkle 3.2s ease-in-out infinite}.ml-meteor{position:absolute;height:1.5px;border-radius:2px;opacity:0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(200,220,255,.35) 60%,#fff);-webkit-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-animation:ml-meteor 9s 2.5s linear infinite;animation:ml-meteor 9s 2.5s linear infinite}.ml-meteor:after{content:\"\";position:absolute;right:-1.5px;top:50%;width:3px;height:3px;margin-top:-1.5px;border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(220,230,255,.7)}.ml-stage{position:absolute;top:0;left:0;width:100%;height:100%;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-transition:-webkit-transform .5s ease;transition:transform .5s ease}.ml-stage.ml-row{-webkit-flex-direction:row;flex-direction:row}.ml-hero{position:relative;-webkit-flex:none;flex:none;-webkit-animation:ml-pop .7s cubic-bezier(.2,1.35,.4,1) both;animation:ml-pop .7s cubic-bezier(.2,1.35,.4,1) both}.ml-glow{position:absolute;left:50%;top:50%;border-radius:50%;background:radial-gradient(circle,rgba(255,140,76,.34) 0%,rgba(255,140,76,.12) 36%,rgba(255,140,76,0) 68%);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-animation:ml-glow 2.6s ease-in-out infinite;animation:ml-glow 2.6s ease-in-out infinite}.ml-shadow{position:absolute;left:50%;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 70%);-webkit-transform:translateX(-50%);transform:translateX(-50%);-webkit-animation:ml-shadow 2.6s ease-in-out infinite;animation:ml-shadow 2.6s ease-in-out infinite}.ml-fox{position:relative;display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-animation:ml-bob 2.6s ease-in-out infinite;animation:ml-bob 2.6s ease-in-out infinite}.ml-info{-webkit-flex:none;flex:none;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center}.ml-logo{display:block;pointer-events:none;-webkit-user-drag:none;-webkit-animation:ml-up .6s .15s ease-out both;animation:ml-up .6s .15s ease-out both}.ml-bar{position:relative;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);-webkit-animation:ml-up .6s .28s ease-out both;animation:ml-up .6s .28s ease-out both}.ml-fill{position:absolute;left:0;top:0;bottom:0;width:0;overflow:hidden;border-radius:999px;background:linear-gradient(90deg,#e2481c 0%,#f26a2c 55%,#ff9a48 100%);box-shadow:0 0 10px rgba(255,112,48,.6)}.ml-fill:after{content:\"\";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.38),rgba(255,255,255,0));-webkit-animation:ml-shine 1.6s linear infinite;animation:ml-shine 1.6s linear infinite}.ml-pct{color:rgba(248,244,234,.6);font-weight:600;line-height:1;letter-spacing:.14em;font-variant-numeric:tabular-nums;-webkit-animation:ml-up .6s .36s ease-out both;animation:ml-up .6s .36s ease-out both}.ml-pct.ml-hidden{display:none}.ml-root.ml-out{opacity:0;pointer-events:none}.ml-root.ml-out .ml-stage{-webkit-transform:scale(1.05);transform:scale(1.05)}@-webkit-keyframes ml-bob{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-4%)}}@keyframes ml-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4%)}}@-webkit-keyframes ml-shadow{0%,100%{-webkit-transform:translateX(-50%) scale(1);opacity:1}50%{-webkit-transform:translateX(-50%) scale(.82);opacity:.7}}@keyframes ml-shadow{0%,100%{transform:translateX(-50%) scale(1);opacity:1}50%{transform:translateX(-50%) scale(.82);opacity:.7}}@-webkit-keyframes ml-glow{0%,100%{-webkit-transform:translate(-50%,-50%) scale(1);opacity:.85}50%{-webkit-transform:translate(-50%,-50%) scale(1.07);opacity:1}}@keyframes ml-glow{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.85}50%{transform:translate(-50%,-50%) scale(1.07);opacity:1}}@-webkit-keyframes ml-pop{from{opacity:0;-webkit-transform:translateY(6%) scale(.82)}to{opacity:1;-webkit-transform:none}}@keyframes ml-pop{from{opacity:0;transform:translateY(6%) scale(.82)}to{opacity:1;transform:none}}@-webkit-keyframes ml-up{from{opacity:0;-webkit-transform:translateY(40%)}to{opacity:1;-webkit-transform:none}}@keyframes ml-up{from{opacity:0;transform:translateY(40%)}to{opacity:1;transform:none}}@-webkit-keyframes ml-shine{from{-webkit-transform:translateX(-100%)}to{-webkit-transform:translateX(260%)}}@keyframes ml-shine{from{transform:translateX(-100%)}to{transform:translateX(260%)}}@-webkit-keyframes ml-twinkle{0%,100%{opacity:.35;-webkit-transform:scale(.8)}45%{opacity:1;-webkit-transform:scale(1)}60%{opacity:.7}}@keyframes ml-twinkle{0%,100%{opacity:.35;transform:scale(.8)}45%{opacity:1;transform:scale(1)}60%{opacity:.7}}@-webkit-keyframes ml-meteor{0%{opacity:0;-webkit-transform:rotate(156deg) translateX(0)}1.5%{opacity:1}8%{opacity:0;-webkit-transform:rotate(156deg) translateX(260%)}100%{opacity:0;-webkit-transform:rotate(156deg) translateX(260%)}}@keyframes ml-meteor{0%{opacity:0;transform:rotate(156deg) translateX(0)}1.5%{opacity:1}8%{opacity:0;transform:rotate(156deg) translateX(260%)}100%{opacity:0;transform:rotate(156deg) translateX(260%)}}@media (prefers-reduced-motion:reduce){.ml-fox,.ml-shadow,.ml-glow,.ml-star,.ml-fill:after{-webkit-animation:none;animation:none}.ml-meteor{display:none}.ml-star{opacity:.5}}";
 
   var STYLE_ID = 'moony-loader-style';
   var LANDSCAPE_FROM = 1.25; // width / height at which the layout switches to a row
@@ -24,6 +24,11 @@
   }
 
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+
+  // Seeded PRNG, so the sky looks the same on every launch and after a resize
+  function random(seed) {
+    return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  }
 
   function now() { return win.performance && performance.now ? performance.now() : Date.now(); }
 
@@ -43,7 +48,8 @@
    * @param {number}  [opts.minDuration=1200] Minimum time on screen, ms. Avoids a flash on fast loads.
    * @param {boolean} [opts.fakeProgress=true] Bar creeps towards 90% by itself until real progress / finish().
    * @param {boolean} [opts.showPercent=true]
-   * @param {number}  [opts.stars=34]
+   * @param {number}  [opts.starDensity=1] Multiplier for the number of stars in the sky.
+   * @param {boolean} [opts.meteors=true]  Occasional shooting star.
    * @param {Function} [opts.onHidden]    Called after the fade-out, when the node is removed.
    */
   function Loader(opts) {
@@ -52,7 +58,8 @@
     this.minDuration = opts.minDuration == null ? 1200 : opts.minDuration;
     this.fakeProgress = opts.fakeProgress !== false;
     this.showPercent = opts.showPercent !== false;
-    this.starCount = opts.stars == null ? 34 : opts.stars;
+    this.starDensity = opts.starDensity == null ? 1 : opts.starDensity;
+    this.meteors = opts.meteors !== false;
     this.onHidden = opts.onHidden || null;
 
     this.real = 0;
@@ -80,14 +87,29 @@
     root.setAttribute('aria-valuemax', '100');
 
     var sky = el('div', 'ml-sky', root);
-    var seed = 7;
-    function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
-    for (var i = 0; i < this.starCount; i++) {
-      var s = el('i', 'ml-star', sky), size = 1 + rnd() * 2.2;
+    this.canvas = el('canvas', 'ml-stars', sky);
+
+    // A few brighter stars twinkle on top of the static canvas field
+    var rnd = random(3);
+    for (var i = 0; i < Math.round(14 * this.starDensity); i++) {
+      var s = el('i', 'ml-star', sky), size = 1.4 + rnd() * 1.4, dur = 2.4 + rnd() * 3;
       s.style.left = (rnd() * 100).toFixed(2) + '%';
-      s.style.top = (rnd() * 100).toFixed(2) + '%';
+      s.style.top = (Math.pow(rnd(), 1.4) * 100).toFixed(2) + '%';
       s.style.width = s.style.height = size.toFixed(1) + 'px';
-      s.style.animationDelay = s.style.webkitAnimationDelay = (-rnd() * 3.2).toFixed(2) + 's';
+      if (rnd() < 0.35) s.style.background = '#d6e4ff';
+      s.style.animationDuration = s.style.webkitAnimationDuration = dur.toFixed(2) + 's';
+      s.style.animationDelay = s.style.webkitAnimationDelay = (-rnd() * dur).toFixed(2) + 's';
+    }
+
+    if (this.meteors) {
+      var meteor = this.meteor = el('i', 'ml-meteor', sky), mr = random(5);
+      var place = function () {
+        meteor.style.left = (25 + mr() * 70).toFixed(1) + '%';
+        meteor.style.top = (mr() * 35).toFixed(1) + '%';
+      };
+      place();
+      meteor.addEventListener('animationiteration', place);
+      meteor.addEventListener('webkitAnimationIteration', place);
     }
 
     this.stage = el('div', 'ml-stage', root);
@@ -120,6 +142,10 @@
   Loader.prototype.layout = function () {
     var w = this.root.clientWidth || win.innerWidth, h = this.root.clientHeight || win.innerHeight;
     if (!w || !h) return;
+    if (w !== this._w || h !== this._h) {
+      this._w = w; this._h = h;
+      this.drawSky(w, h);
+    }
     var landscape = w / h >= LANDSCAPE_FROM, fox, col, gap;
 
     if (landscape) {
@@ -144,6 +170,67 @@
     px(this.logo, { width: col, height: col * LOGO_RATIO });
     px(this.bar, { width: barW, height: barH, marginTop: fox * 0.13 });
     px(this.pct, { fontSize: fs, marginTop: barH + fs * 0.5 });
+  };
+
+  // Static night sky on a canvas: a faint Milky Way band plus a field of stars whose sizes,
+  // brightness and colour temperature follow a natural spread (many faint, very few bright).
+  Loader.prototype.drawSky = function (w, h) {
+    var c = this.canvas, ctx = c.getContext && c.getContext('2d');
+    if (!ctx) return;
+    var dpr = Math.min(win.devicePixelRatio || 1, 2);
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+    c.style.width = w + 'px'; c.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    var rnd = random(11), area = w * h, diag = Math.sqrt(area * 2), i, x, y, r, a, g;
+    function gauss() { return (rnd() + rnd() + rnd() + rnd() - 2) / 2; } // ~N(0, 0.29)
+    var tints = ['255,255,255', '255,255,255', '214,226,255', '190,208,255', '255,236,214', '255,214,180'];
+
+    // Milky Way: diagonal band of haze, then a dense dust of tiny stars inside it
+    ctx.save();
+    ctx.translate(w * 0.5, h * 0.42);
+    ctx.rotate(-0.55);
+    for (i = 0; i < 26; i++) {
+      x = (rnd() - 0.5) * diag; y = gauss() * diag * 0.08; r = diag * (0.07 + rnd() * 0.1);
+      g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      var tint = rnd() < 0.6 ? '140,150,255' : '205,150,255';
+      g.addColorStop(0, 'rgba(' + tint + ',' + (0.06 + rnd() * 0.06).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(' + tint + ',0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+    var dust = Math.round(area / 450 * this.starDensity);
+    for (i = 0; i < dust; i++) {
+      x = (rnd() - 0.5) * diag; y = gauss() * diag * 0.1;
+      a = 0.18 + rnd() * 0.45; r = 0.5 + rnd() * 0.5;
+      ctx.fillStyle = 'rgba(' + tints[(rnd() * tints.length) | 0] + ',' + a.toFixed(2) + ')';
+      ctx.fillRect(x, y, r, r);
+    }
+    ctx.restore();
+
+    // Field stars
+    var n = Math.round(area / 700 * this.starDensity);
+    for (i = 0; i < n; i++) {
+      x = rnd() * w; y = rnd() * h;
+      var m = Math.pow(rnd(), 7);                 // magnitude: mostly faint
+      r = 0.45 + m * 1.5;
+      a = Math.min(1, 0.3 + m * 0.8 + rnd() * 0.35);
+      a *= 0.65 + 0.35 * (1 - y / h);             // slightly dimmer towards the horizon haze
+      var col = tints[(rnd() * tints.length) | 0];
+      if (r > 1.1) {
+        g = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+        g.addColorStop(0, 'rgba(' + col + ',' + (a * 0.35).toFixed(2) + ')');
+        g.addColorStop(1, 'rgba(' + col + ',0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(x - r * 5, y - r * 5, r * 10, r * 10);
+      }
+      ctx.fillStyle = 'rgba(' + col + ',' + a.toFixed(2) + ')';
+      if (r < 0.7) ctx.fillRect(x, y, r * 1.4, r * 1.4);
+      else { ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); }
+    }
+
+    if (this.meteor) this.meteor.style.width = Math.round(clamp(Math.min(w, h) * 0.28, 70, 220)) + 'px';
   };
 
   Loader.prototype.tick = function (t) {
