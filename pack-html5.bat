@@ -6,7 +6,7 @@ cd /d "%~dp0"
 rem Упаковка загрузочного экрана Moony Dreams в HTML5 (index.html + zip) в build\html5\
 rem   Двойной клик            - чистый HTML5-шаблон с лоадером
 rem   Перетащить .html на bat - лоадер встраивается в эту игру
-rem   pack-html5.bat game.html --name my_playable
+rem   pack-html5.bat site\index.html --name my_site
 
 where python >nul 2>nul
 if errorlevel 1 (

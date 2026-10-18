@@ -1,11 +1,11 @@
-"""Packs the loading screen into an HTML5 build ready for ad networks: index.html + .zip.
+"""Packs the loading screen into a web page: index.html + .zip.
 
-    python loader/pack.py                  # clean HTML5 template with the loader
-    python loader/pack.py path/to/game.html  # inject the loader into an existing build
+    python loader/pack.py                    # clean HTML page with the loader
+    python loader/pack.py path/to/index.html # inject the loader into an existing page
 
-When a game is given, the loader goes in right after <body>, before any game code, and hides itself on
-window "load". A game that reports real progress sets window.MOONY_LOADER_MANUAL = true and calls
-MoonyLoader.setProgress(p) / MoonyLoader.finish() itself. Sibling files of the game's HTML (js, assets)
+When a page is given, the loader goes in right after <body>, before any other code, and hides itself on
+window "load". A page that reports real progress sets window.MOONY_LOADER_MANUAL = true and calls
+MoonyLoader.setProgress(p) / MoonyLoader.finish() itself. Sibling files of the page (js, css, assets)
 are copied into the build too.
 """
 import argparse, re, shutil, sys, zipfile
@@ -17,7 +17,6 @@ import build  # noqa: E402
 
 ROOT = HERE.parent
 OUT = ROOT / 'build' / 'html5'
-SIZE_LIMIT = 5 * 1024 * 1024  # the strictest common network limit (AppLovin, Unity, ironSource)
 
 BOOTSTRAP = """(function () {
   var loader = MoonyLoader.show();
@@ -85,7 +84,7 @@ def main():
         others = [p for p in game.parent.iterdir() if p != game and p.name not in ('build', '.git')]
         files = [f for p in others for f in ([p] if p.is_file() else p.rglob('*')) if f.is_file()]
         if len(files) > 2000 or sum(f.stat().st_size for f in files) > 200 * 1024 * 1024:
-            sys.exit(f'{game.parent} has too many files for a playable build. Put the game in its own folder.')
+            sys.exit(f'{game.parent} has too many files to pack. Put the site in its own folder.')
         for p in others:
             if p.is_dir():
                 shutil.copytree(p, target / p.name)
@@ -105,9 +104,6 @@ def main():
                 if p.is_file():
                     z.write(p, p.relative_to(target).as_posix())
         print(f'{zpath}  ({zpath.stat().st_size / 1024:.1f} KB)')
-
-    if size > SIZE_LIMIT:
-        print(f'\nWARNING: build is {size / 1048576:.2f} MB, over the 5 MB limit of most ad networks.')
 
 
 if __name__ == '__main__':

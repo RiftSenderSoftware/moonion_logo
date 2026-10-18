@@ -11,7 +11,7 @@
 </head>
 <body>
 <script>
-/*! Moony Dreams loading screen for playables. Self-contained: no network requests, ES5, no dependencies. */
+/*! Moony Dreams loading screen for the web. Self-contained: no network requests, ES5, no dependencies. */
 (function (win, doc) {
   'use strict';
 
@@ -161,7 +161,7 @@
   };
 
   // Sizes are computed from the real viewport so the composition holds on any aspect ratio,
-  // from 320x480 phones to 4K, and inside MRAID webviews that resize the ad.
+  // from 320x480 phones to 4K, and inside webviews and iframes that get resized.
   Loader.prototype.layout = function () {
     var w = this.root.clientWidth || win.innerWidth, h = this.root.clientHeight || win.innerHeight;
     if (!w || !h) return;
@@ -259,7 +259,7 @@
   };
 
   // The constellation sits in the largest free patch of sky: above the content on portrait,
-  // to the right of it on landscape. On cramped screens (banners) it is skipped.
+  // to the right of it on landscape. On cramped screens (e.g. 300x250) it is skipped.
   Loader.prototype.placeConstellation = function (w, h, landscape) {
     var c = this.constel, hero = this.hero, info = this.info, s, cx, cy;
     if (landscape) {
