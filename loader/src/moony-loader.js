@@ -12,6 +12,13 @@
   var STYLE_ID = 'moony-loader-style';
   var LANDSCAPE_FROM = 1.25; // width / height at which the layout switches to a row
 
+  // Fox-head constellation in a unit box, listed in the order the lines get drawn:
+  // nose -> left cheek -> left ear -> brow -> right ear -> right cheek -> back to the nose.
+  var CONSTEL = [[0.5, 1], [0, 0.6], [0.16, 0], [0.38, 0.3], [0.62, 0.3], [0.84, 0], [1, 0.6]];
+  var CONSTEL_EYES = [[0.32, 0.6], [0.68, 0.6]];
+  var CONSTEL_MARK = [0.5, 0.47];  // the forehead sparkle from the mascot
+  var CONSTEL_TILT = -0.08;        // radians, so it reads as a sky pattern rather than an icon
+
   function el(tag, cls, parent) {
     var e = doc.createElement(tag);
     if (cls) e.className = cls;
@@ -88,6 +95,8 @@
 
     var sky = el('div', 'ml-sky', root);
     this.canvas = el('canvas', 'ml-stars', sky);
+    this.constel = el('canvas', 'ml-constel', sky);
+    this._drawn = -1;
 
     // A few brighter stars twinkle on top of the static canvas field
     var rnd = random(3);
@@ -170,6 +179,7 @@
     px(this.logo, { width: col, height: col * LOGO_RATIO });
     px(this.bar, { width: barW, height: barH, marginTop: fox * 0.13 });
     px(this.pct, { fontSize: fs, marginTop: barH + fs * 0.5 });
+    this.placeConstellation(w, h, landscape);
   };
 
   // Static night sky on a canvas: a faint Milky Way band plus a field of stars whose sizes,
@@ -233,6 +243,82 @@
     if (this.meteor) this.meteor.style.width = Math.round(clamp(Math.min(w, h) * 0.28, 70, 220)) + 'px';
   };
 
+  // The constellation sits in the largest free patch of sky: above the content on portrait,
+  // to the right of it on landscape. On cramped screens (banners) it is skipped.
+  Loader.prototype.placeConstellation = function (w, h, landscape) {
+    var c = this.constel, hero = this.hero, info = this.info, s, cx, cy;
+    if (landscape) {
+      var right = Math.max(hero.offsetLeft + hero.offsetWidth, info.offsetLeft + info.offsetWidth), rw = w - right;
+      s = Math.min(rw * 0.6, h * 0.42, Math.min(w, h) * 0.34);
+      cx = right + rw * 0.5;
+      cy = Math.max(h * 0.27, s * 0.62);
+    } else {
+      var top = Math.min(hero.offsetTop, info.offsetTop);
+      s = Math.min(w * 0.42, top * 0.62, Math.min(w, h) * 0.34);
+      cx = w * 0.5;
+      cy = top * 0.5;
+    }
+    if (s < 60) { c.style.display = 'none'; this._cs = 0; return; }
+
+    var pad = Math.round(s * 0.22), dpr = Math.min(win.devicePixelRatio || 1, 2);
+    var cw = s + pad * 2, ch = s * 0.95 + pad * 2;
+    c.style.display = 'block';
+    c.width = Math.round(cw * dpr); c.height = Math.round(ch * dpr);
+    px(c, { width: cw, height: ch, left: cx - cw / 2, top: cy - ch / 2 });
+    this._cs = s; this._cpad = pad; this._cdpr = dpr;
+    this.drawConstellation();
+  };
+
+  // Lines connect star by star as loading progresses; the eyes and the forehead sparkle light up last.
+  Loader.prototype.drawConstellation = function () {
+    var c = this.constel, ctx = c.getContext && c.getContext('2d'), s = this._cs;
+    this._drawn = this.shown;
+    if (!ctx || !s) return;
+    var dpr = this._cdpr, pad = this._cpad, H = 0.95, n = CONSTEL.length, i, a, b, f;
+    var t = this.shown * (n + 1);
+    function pt(q) { return [q[0] * s, q[1] * s * H]; }
+    function star(p, lit, r) {
+      ctx.shadowBlur = lit * s * 0.07 * dpr;
+      ctx.fillStyle = 'rgba(255,' + Math.round(240 - lit * 12) + ',' + Math.round(226 - lit * 26) + ',' + (0.3 + lit * 0.7).toFixed(2) + ')';
+      ctx.beginPath(); ctx.arc(p[0], p[1], r * (0.6 + lit * 0.4), 0, 6.2832); ctx.fill();
+    }
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.translate(pad + s / 2, pad + s * H / 2);
+    ctx.rotate(CONSTEL_TILT);
+    ctx.translate(-s / 2, -s * H / 2);
+    ctx.shadowColor = 'rgba(255, 112, 40, .95)';
+
+    ctx.lineCap = 'round';
+    ctx.lineWidth = Math.max(1, s * 0.008);
+    ctx.strokeStyle = 'rgba(255, 138, 70, .7)';
+    ctx.shadowBlur = s * 0.035 * dpr;
+    ctx.beginPath();
+    for (i = 0; i < n; i++) {
+      f = clamp(t - i, 0, 1);
+      if (!f) break;
+      a = pt(CONSTEL[i]); b = pt(CONSTEL[(i + 1) % n]);
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f);
+    }
+    ctx.stroke();
+
+    var r = Math.max(1.5, s * 0.022);
+    for (i = 0; i < n; i++) star(pt(CONSTEL[i]), clamp((t - i) * 3, 0, 1), r);
+    var e = clamp(t - n, 0, 1);
+    for (i = 0; i < CONSTEL_EYES.length; i++) star(pt(CONSTEL_EYES[i]), e, r * 0.85);
+
+    // Four-point sparkle, same motif as on the fox's forehead
+    var m = pt(CONSTEL_MARK), k = s * 0.075 * (0.55 + e * 0.45), q = k * 0.22;
+    ctx.shadowBlur = e * s * 0.09 * dpr;
+    ctx.fillStyle = 'rgba(255, 244, 232, ' + (0.22 + e * 0.78).toFixed(2) + ')';
+    ctx.beginPath();
+    ctx.moveTo(m[0], m[1] - k); ctx.lineTo(m[0] + q, m[1] - q); ctx.lineTo(m[0] + k, m[1]); ctx.lineTo(m[0] + q, m[1] + q);
+    ctx.lineTo(m[0], m[1] + k); ctx.lineTo(m[0] - q, m[1] + q); ctx.lineTo(m[0] - k, m[1]); ctx.lineTo(m[0] - q, m[1] - q);
+    ctx.closePath(); ctx.fill();
+  };
+
   Loader.prototype.tick = function (t) {
     if (this.destroyed) return;
     t = t || now();
@@ -251,8 +337,14 @@
       this.pct.textContent = p + '%';
       this.root.setAttribute('aria-valuenow', p);
     }
+    if (Math.abs(this.shown - this._drawn) > 0.0015 || (this.shown >= 1 && this._drawn < 1)) this.drawConstellation();
 
-    if (this.finishing && this.shown >= 1 && now() - this.started >= this.minDuration) return this.hide();
+    // Let the completed constellation flash before fading out
+    if (this.shown >= 1 && !this._fullAt) {
+      this._fullAt = now();
+      this.constel.className += ' ml-lit';
+    }
+    if (this.finishing && this._fullAt && now() - this._fullAt >= 550 && now() - this.started >= this.minDuration) return this.hide();
     raf(this._tick);
   };
 
