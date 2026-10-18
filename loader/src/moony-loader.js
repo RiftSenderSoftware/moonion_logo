@@ -96,11 +96,12 @@
     var sky = el('div', 'ml-sky', root);
     this.canvas = el('canvas', 'ml-stars', sky);
     this.constel = el('canvas', 'ml-constel', sky);
+    this.moon = el('i', 'ml-moon', sky);
     this._drawn = -1;
 
     // A few brighter stars twinkle on top of the static canvas field
     var rnd = random(3);
-    for (var i = 0; i < Math.round(14 * this.starDensity); i++) {
+    for (var i = 0; i < Math.round(8 * this.starDensity); i++) {
       var s = el('i', 'ml-star', sky), size = 1.4 + rnd() * 1.4, dur = 2.4 + rnd() * 3;
       s.style.left = (rnd() * 100).toFixed(2) + '%';
       s.style.top = (Math.pow(rnd(), 1.4) * 100).toFixed(2) + '%';
@@ -180,6 +181,7 @@
     px(this.bar, { width: barW, height: barH, marginTop: fox * 0.13 });
     px(this.pct, { fontSize: fs, marginTop: barH + fs * 0.5 });
     this.placeConstellation(w, h, landscape);
+    this.placeMoon(w, h, landscape);
   };
 
   // Static night sky on a canvas: a faint Milky Way band plus a field of stars whose sizes,
@@ -201,26 +203,26 @@
     ctx.save();
     ctx.translate(w * 0.5, h * 0.42);
     ctx.rotate(-0.55);
-    for (i = 0; i < 26; i++) {
+    for (i = 0; i < 14; i++) {
       x = (rnd() - 0.5) * diag; y = gauss() * diag * 0.08; r = diag * (0.07 + rnd() * 0.1);
       g = ctx.createRadialGradient(x, y, 0, x, y, r);
       var tint = rnd() < 0.6 ? '140,150,255' : '205,150,255';
-      g.addColorStop(0, 'rgba(' + tint + ',' + (0.06 + rnd() * 0.06).toFixed(3) + ')');
+      g.addColorStop(0, 'rgba(' + tint + ',' + (0.03 + rnd() * 0.03).toFixed(3) + ')');
       g.addColorStop(1, 'rgba(' + tint + ',0)');
       ctx.fillStyle = g;
       ctx.fillRect(x - r, y - r, r * 2, r * 2);
     }
-    var dust = Math.round(area / 450 * this.starDensity);
+    var dust = Math.round(area / 1500 * this.starDensity);
     for (i = 0; i < dust; i++) {
       x = (rnd() - 0.5) * diag; y = gauss() * diag * 0.1;
-      a = 0.18 + rnd() * 0.45; r = 0.5 + rnd() * 0.5;
+      a = 0.12 + rnd() * 0.3; r = 0.45 + rnd() * 0.45;
       ctx.fillStyle = 'rgba(' + tints[(rnd() * tints.length) | 0] + ',' + a.toFixed(2) + ')';
       ctx.fillRect(x, y, r, r);
     }
     ctx.restore();
 
     // Field stars
-    var n = Math.round(area / 700 * this.starDensity);
+    var n = Math.round(area / 1900 * this.starDensity);
     for (i = 0; i < n; i++) {
       x = rnd() * w; y = rnd() * h;
       var m = Math.pow(rnd(), 7);                 // magnitude: mostly faint
@@ -228,9 +230,9 @@
       a = Math.min(1, 0.3 + m * 0.8 + rnd() * 0.35);
       a *= 0.65 + 0.35 * (1 - y / h);             // slightly dimmer towards the horizon haze
       var col = tints[(rnd() * tints.length) | 0];
-      if (r > 1.1) {
+      if (r > 1.3) {
         g = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
-        g.addColorStop(0, 'rgba(' + col + ',' + (a * 0.35).toFixed(2) + ')');
+        g.addColorStop(0, 'rgba(' + col + ',' + (a * 0.22).toFixed(2) + ')');
         g.addColorStop(1, 'rgba(' + col + ',0)');
         ctx.fillStyle = g;
         ctx.fillRect(x - r * 5, y - r * 5, r * 10, r * 10);
@@ -267,6 +269,34 @@
     px(c, { width: cw, height: ch, left: cx - cw / 2, top: cy - ch / 2 });
     this._cs = s; this._cpad = pad; this._cdpr = dpr;
     this.drawConstellation();
+  };
+
+  // Moon that waxes with loading: starts as the mascot's crescent, becomes full at 100%.
+  // It goes in the corner opposite the constellation: top-right on portrait, top-left on landscape.
+  Loader.prototype.placeMoon = function (w, h, landscape) {
+    var m = this.moon, d = clamp(Math.min(w, h) * 0.105, 24, 100), x, y;
+    if (landscape) {
+      x = w * 0.06; y = h * 0.1;
+    } else {
+      var top = Math.min(this.hero.offsetTop, this.info.offsetTop);
+      x = w * 0.9 - d; y = Math.max(12, top * 0.16);
+      if (top < d * 1.8) { m.style.display = 'none'; return; }
+    }
+    m.style.display = 'block';
+    px(m, { width: d, height: d, left: x, top: y });
+    this._moonD = d;
+    this.drawMoon();
+  };
+
+  // The lit part is an inset shadow: disc minus the same disc shifted along the light direction.
+  // A small shift gives a thin crescent, a shift of one diameter lights the whole disc.
+  Loader.prototype.drawMoon = function () {
+    var d = this._moonD, p = this.shown;
+    if (!d) return;
+    var shift = d * (0.26 + 0.76 * p), glow = 0.25 + p * 0.2, halo = 0.14 + p * 0.16;
+    this.moon.style.boxShadow = 'inset ' + (shift * 0.923).toFixed(1) + 'px ' + (-shift * 0.385).toFixed(1) + 'px 0 0 #fff1e0, ' +
+      '0 0 ' + (d * 0.35).toFixed(1) + 'px rgba(255, 214, 170, ' + glow.toFixed(2) + '), ' +
+      '0 0 ' + (d * 1.2).toFixed(1) + 'px rgba(255, 150, 90, ' + halo.toFixed(2) + ')';
   };
 
   // Lines connect star by star as loading progresses; the eyes and the forehead sparkle light up last.
@@ -337,7 +367,10 @@
       this.pct.textContent = p + '%';
       this.root.setAttribute('aria-valuenow', p);
     }
-    if (Math.abs(this.shown - this._drawn) > 0.0015 || (this.shown >= 1 && this._drawn < 1)) this.drawConstellation();
+    if (Math.abs(this.shown - this._drawn) > 0.0015 || (this.shown >= 1 && this._drawn < 1)) {
+      this.drawConstellation();
+      this.drawMoon();
+    }
 
     // Let the completed constellation flash before fading out
     if (this.shown >= 1 && !this._fullAt) {

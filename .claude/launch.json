@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "8765", "--directory", "loader"],
       "port": 8765
+    },
+    {
+      "name": "html5-build",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8766", "--directory", "build/html5"],
+      "port": 8766
     }
   ]
 }

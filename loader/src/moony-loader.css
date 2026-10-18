@@ -28,6 +28,14 @@
   box-shadow: 0 0 3px 1px rgba(255, 246, 234, .35), 0 0 8px 2px rgba(200, 215, 255, .12);
   -webkit-animation: ml-twinkle 3.2s ease-in-out infinite; animation: ml-twinkle 3.2s ease-in-out infinite;
 }
+/* Crescent: the lit sliver is an inset shadow (set in JS, it scales with the moon);
+   the dark side is opaque so stars don't show through, with a faint earthshine. */
+.ml-moon {
+  position: absolute; display: block; border-radius: 50%;
+  background: radial-gradient(circle at 30% 65%, rgba(255, 232, 210, .09), rgba(255, 232, 210, .03) 70%), #080a1e;
+  -webkit-transform: rotate(-12deg); transform: rotate(-12deg);
+  -webkit-animation: ml-fade 1.4s .1s ease-out both; animation: ml-fade 1.4s .1s ease-out both;
+}
 .ml-constel {
   position: absolute; display: block;
   -webkit-animation: ml-fade 1.2s .2s ease-out both; animation: ml-fade 1.2s .2s ease-out both;
