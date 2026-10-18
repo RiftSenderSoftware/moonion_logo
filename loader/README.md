@@ -1,0 +1,73 @@
+# Moony Dreams — загрузочный экран для плееблов
+
+Один JS-файл без зависимостей и сетевых запросов: CSS и картинки вшиты внутрь (≈45 KB).
+Подходит для single-file плееблов (AppLovin, Unity Ads, ironSource, Mintegral, Google, Meta, TikTok и т.д.),
+работает в MRAID-вебвью, ES5 — без сборщика.
+
+Готовый файл: [`dist/moony-loader.js`](dist/moony-loader.js).
+
+## Адаптивность
+
+Размеры считаются от реального viewport при каждом `resize` / `orientationchange`:
+
+| Формат | Компоновка |
+|---|---|
+| Портрет и квадрат (ширина/высота < 1.25) | Лиса сверху, под ней логотип, прогресс-бар, проценты |
+| Альбом (≥ 1.25) | Лиса слева, справа логотип и прогресс-бар |
+
+Учитываются safe-area (чёлки), есть `prefers-reduced-motion`. Посмотреть все разрешения сразу можно в [`preview.html`](preview.html).
+
+## Подключение
+
+Вставьте скрипт **первым элементом `<body>`**, до кода игры, чтобы экран появился сразу:
+
+```html
+<body>
+  <script>/* содержимое dist/moony-loader.js */</script>
+  <script>
+    var loader = MoonyLoader.show();
+  </script>
+  ...
+```
+
+Или без кода: `<script src="moony-loader.js" data-autoshow></script>`.
+
+Дальше в коде игры:
+
+```js
+MoonyLoader.setProgress(0.4);   // реальный прогресс 0..1 (необязательно)
+MoonyLoader.finish(function () {
+  // экран догрузил бар до 100%, плавно исчез и удалён из DOM
+  startGame();
+});
+```
+
+Если реального прогресса нет, бар сам плавно ползёт к 90% и добегает до 100% по `finish()`.
+
+### Unity WebGL / Luna / Cocos
+
+Вызовите `MoonyLoader.show()` до старта движка, передавайте прогресс из колбэка загрузки
+(например, `createUnityInstance(canvas, config, function (p) { MoonyLoader.setProgress(p); })`),
+а `finish()` — когда первая сцена готова к показу.
+
+## Опции `show()`
+
+| Опция | По умолчанию | |
+|---|---|---|
+| `parent` | вся страница | Элемент, который нужно перекрыть (тогда `position: absolute`) |
+| `minDuration` | `1200` | Минимум мс на экране, чтобы не мелькал при быстрой загрузке |
+| `fakeProgress` | `true` | Автоматическое заполнение бара до 90% |
+| `showPercent` | `true` | Показывать проценты |
+| `stars` | `34` | Количество звёзд на фоне |
+| `onHidden` | — | Колбэк после исчезновения (то же, что аргумент `finish`) |
+
+`MoonyLoader.show()` возвращает экземпляр с методами `setProgress`, `finish`, `destroy` (убрать сразу, без анимации).
+
+## Изменение
+
+Исходники лежат в `src/` (`moony-loader.js`, `moony-loader.css`), картинки берутся из `../assets/`.
+После правок пересоберите файл (нужен Python с Pillow):
+
+```bash
+python loader/build.py
+```

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moony Loader Preview</title>
+<style>
+  :root { --bg: #f4f3f0; --fg: #1d1b22; --muted: #6b6772; --frame: #d9d6d0; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #121117; --fg: #ece9f2; --muted: #9a95a6; --frame: #2c2934; } }
+  body { margin: 0; padding: 24px 16px 48px; background: var(--bg); color: var(--fg); font: 14px/1.4 system-ui, sans-serif; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p { margin: 0 0 20px; color: var(--muted); }
+  .grid { display: flex; flex-wrap: wrap; gap: 28px 24px; align-items: flex-end; }
+  figure { margin: 0; }
+  .box { overflow: hidden; border-radius: 10px; border: 1px solid var(--frame); background: #000; }
+  iframe { border: 0; display: block; transform-origin: 0 0; }
+  figcaption { margin-top: 8px; color: var(--muted); font-size: 12px; }
+  figcaption b { color: var(--fg); font-weight: 600; }
+  label { display: inline-flex; gap: 6px; align-items: center; margin: 0 16px 20px 0; color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>Moony Dreams — загрузочный экран</h1>
+<p>Каждое окно — реальный viewport указанного размера, уменьшенный для превью.</p>
+<label><input type="radio" name="mode" value="loop=1" checked> Анимация загрузки</label>
+<label><input type="radio" name="mode" value="hold=0.62"> Стоп на 62%</label>
+<div class="grid" id="grid"></div>
+<script>
+  var devices = [
+    ['iPhone SE', 320, 568], ['iPhone 8', 375, 667], ['iPhone 14', 390, 844], ['Android 20:9', 412, 915],
+    ['iPad', 768, 1024], ['iPad landscape', 1024, 768], ['Phone landscape', 844, 390],
+    ['Square 1:1', 600, 600], ['Banner 300×250', 300, 250], ['Desktop 16:9', 1920, 1080]
+  ];
+  var grid = document.getElementById('grid');
+  function render(mode) {
+    grid.innerHTML = '';
+    devices.forEach(function (d) {
+      var scale = Math.min(1, 260 / d[2], 420 / d[1]);
+      var fig = document.createElement('figure');
+      fig.innerHTML = '<div class="box" style="width:' + Math.round(d[1] * scale) + 'px;height:' + Math.round(d[2] * scale) + 'px">' +
+        '<iframe src="dist/demo.html?' + mode + '" width="' + d[1] + '" height="' + d[2] + '" style="transform:scale(' + scale + ')"></iframe></div>' +
+        '<figcaption><b>' + d[0] + '</b> · ' + d[1] + '×' + d[2] + '</figcaption>';
+      grid.appendChild(fig);
+    });
+  }
+  document.querySelectorAll('input[name=mode]').forEach(function (r) { r.onchange = function () { render(r.value); }; });
+  render('loop=1');
+</script>
+</body>
+</html>

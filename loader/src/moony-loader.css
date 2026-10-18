@@ -1,0 +1,121 @@
+/* Moony Dreams loading screen. All classes are prefixed "ml-" to stay out of the host project's way. */
+.ml-root {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2147483000;
+  overflow: hidden;
+  background: #0d0922;
+  background: radial-gradient(ellipse at 50% 42%, #3a2660 0%, #1d1339 46%, #0b0720 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: none;
+  opacity: 1;
+  -webkit-transition: opacity .5s ease; transition: opacity .5s ease;
+}
+.ml-root.ml-abs { position: absolute; }
+.ml-root * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Sky */
+.ml-sky { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.ml-star {
+  position: absolute; border-radius: 50%;
+  background: #fff4e2;
+  box-shadow: 0 0 4px rgba(255, 236, 205, .8);
+  -webkit-animation: ml-twinkle 3.2s ease-in-out infinite; animation: ml-twinkle 3.2s ease-in-out infinite;
+}
+
+/* Stage: column on portrait / square screens, row on landscape */
+.ml-stage {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-flex-direction: column; flex-direction: column;
+  -webkit-align-items: center; align-items: center;
+  -webkit-justify-content: center; justify-content: center;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-transition: -webkit-transform .5s ease; transition: transform .5s ease;
+}
+.ml-stage.ml-row { -webkit-flex-direction: row; flex-direction: row; }
+
+/* Hero: fox with warm glow and contact shadow */
+.ml-hero {
+  position: relative; -webkit-flex: none; flex: none;
+  -webkit-animation: ml-pop .7s cubic-bezier(.2, 1.35, .4, 1) both; animation: ml-pop .7s cubic-bezier(.2, 1.35, .4, 1) both;
+}
+.ml-glow {
+  position: absolute; left: 50%; top: 50%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 140, 76, .34) 0%, rgba(255, 140, 76, .12) 36%, rgba(255, 140, 76, 0) 68%);
+  -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%);
+  -webkit-animation: ml-glow 2.6s ease-in-out infinite; animation: ml-glow 2.6s ease-in-out infinite;
+}
+.ml-shadow {
+  position: absolute; left: 50%; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, .45) 0%, rgba(0, 0, 0, 0) 70%);
+  -webkit-transform: translateX(-50%); transform: translateX(-50%);
+  -webkit-animation: ml-shadow 2.6s ease-in-out infinite; animation: ml-shadow 2.6s ease-in-out infinite;
+}
+.ml-fox {
+  position: relative; display: block; width: 100%; height: 100%;
+  pointer-events: none; -webkit-user-drag: none;
+  -webkit-animation: ml-bob 2.6s ease-in-out infinite; animation: ml-bob 2.6s ease-in-out infinite;
+}
+
+/* Info: logo, progress bar, percent */
+.ml-info {
+  -webkit-flex: none; flex: none;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-flex-direction: column; flex-direction: column;
+  -webkit-align-items: center; align-items: center;
+}
+.ml-logo {
+  display: block; pointer-events: none; -webkit-user-drag: none;
+  -webkit-animation: ml-up .6s .15s ease-out both; animation: ml-up .6s .15s ease-out both;
+}
+.ml-bar {
+  position: relative; overflow: hidden; border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07);
+  -webkit-animation: ml-up .6s .28s ease-out both; animation: ml-up .6s .28s ease-out both;
+}
+.ml-fill {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0; overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e2481c 0%, #f26a2c 55%, #ff9a48 100%);
+  box-shadow: 0 0 10px rgba(255, 112, 48, .6);
+}
+.ml-fill:after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .38), rgba(255, 255, 255, 0));
+  -webkit-animation: ml-shine 1.6s linear infinite; animation: ml-shine 1.6s linear infinite;
+}
+.ml-pct {
+  color: rgba(248, 244, 234, .6);
+  font-weight: 600; line-height: 1; letter-spacing: .14em;
+  font-variant-numeric: tabular-nums;
+  -webkit-animation: ml-up .6s .36s ease-out both; animation: ml-up .6s .36s ease-out both;
+}
+.ml-pct.ml-hidden { display: none; }
+
+/* Exit */
+.ml-root.ml-out { opacity: 0; pointer-events: none; }
+.ml-root.ml-out .ml-stage { -webkit-transform: scale(1.05); transform: scale(1.05); }
+
+@-webkit-keyframes ml-bob { 0%, 100% { -webkit-transform: translateY(0); } 50% { -webkit-transform: translateY(-4%); } }
+@keyframes ml-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
+@-webkit-keyframes ml-shadow { 0%, 100% { -webkit-transform: translateX(-50%) scale(1); opacity: 1; } 50% { -webkit-transform: translateX(-50%) scale(.82); opacity: .7; } }
+@keyframes ml-shadow { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.82); opacity: .7; } }
+@-webkit-keyframes ml-glow { 0%, 100% { -webkit-transform: translate(-50%, -50%) scale(1); opacity: .85; } 50% { -webkit-transform: translate(-50%, -50%) scale(1.07); opacity: 1; } }
+@keyframes ml-glow { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .85; } 50% { transform: translate(-50%, -50%) scale(1.07); opacity: 1; } }
+@-webkit-keyframes ml-pop { from { opacity: 0; -webkit-transform: translateY(6%) scale(.82); } to { opacity: 1; -webkit-transform: none; } }
+@keyframes ml-pop { from { opacity: 0; transform: translateY(6%) scale(.82); } to { opacity: 1; transform: none; } }
+@-webkit-keyframes ml-up { from { opacity: 0; -webkit-transform: translateY(40%); } to { opacity: 1; -webkit-transform: none; } }
+@keyframes ml-up { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
+@-webkit-keyframes ml-shine { from { -webkit-transform: translateX(-100%); } to { -webkit-transform: translateX(260%); } }
+@keyframes ml-shine { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+@-webkit-keyframes ml-twinkle { 0%, 100% { opacity: .15; } 50% { opacity: .85; } }
+@keyframes ml-twinkle { 0%, 100% { opacity: .15; } 50% { opacity: .85; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-fox, .ml-shadow, .ml-glow, .ml-star, .ml-fill:after { -webkit-animation: none; animation: none; }
+  .ml-star { opacity: .5; }
+}

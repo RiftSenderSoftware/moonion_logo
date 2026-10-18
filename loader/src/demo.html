@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Moony Dreams loader demo</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font: 16px system-ui, sans-serif; }
+  #game { height: 100%; display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<!-- LOADER -->
+<div id="game">Game is ready</div>
+<script>
+  // Simulated loading. ?loop=1 restarts it forever (used by preview.html), ?hold=0.6 freezes the bar at 60%.
+  var q = new URLSearchParams(location.search);
+  function run() {
+    var loader = MoonyLoader.show();
+    var hold = q.get('hold');
+    if (hold) { loader.fakeProgress = false; loader.setProgress(+hold); return; }
+    var p = 0;
+    var timer = setInterval(function () {
+      p += Math.random() * 0.12;
+      loader.setProgress(p);
+      if (p >= 1) {
+        clearInterval(timer);
+        loader.finish(function () { if (q.get('loop')) setTimeout(run, 1200); });
+      }
+    }, 250);
+  }
+  run();
+</script>
+</body>
+</html>
