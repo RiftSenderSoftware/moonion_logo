@@ -49,6 +49,10 @@ def main():
     demo = (HERE / 'src' / 'demo.html').read_text(encoding='utf-8').replace('<!-- LOADER -->', '<script>\n' + js + '\n</script>')
     (DIST / 'demo.html').write_text(demo, encoding='utf-8')
 
+    white_js = js.replace("opts = opts || {};", "opts = opts || {}; if (opts.theme == null) opts.theme = 'white';")
+    (DIST / 'moony-loader-white.js').write_text(white_js, encoding='utf-8')
+    (DIST / 'demo-white.html').write_text(demo.replace(js, white_js), encoding='utf-8')
+
     print(f'dist/moony-loader.js  {len(js.encode()) / 1024:.1f} KB')
     print(f'dist/demo.html        {len(demo.encode()) / 1024:.1f} KB')
 

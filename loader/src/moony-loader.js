@@ -55,12 +55,14 @@
    * @param {number}  [opts.minDuration=1200] Minimum time on screen, ms. Avoids a flash on fast loads.
    * @param {boolean} [opts.fakeProgress=true] Bar creeps towards 90% by itself until real progress / finish().
    * @param {boolean} [opts.showPercent=true]
+   * @param {string}  [opts.theme='dark'] 'white' for a white background.
    * @param {number}  [opts.starDensity=1] Multiplier for the number of stars in the sky.
    * @param {boolean} [opts.meteors=true]  Occasional shooting star.
    * @param {Function} [opts.onHidden]    Called after the fade-out, when the node is removed.
    */
   function Loader(opts) {
     opts = opts || {};
+    this.theme = opts.theme === 'white' ? 'white' : 'dark';
     this.parent = opts.parent || null;
     this.minDuration = opts.minDuration == null ? 1200 : opts.minDuration;
     this.fakeProgress = opts.fakeProgress !== false;
@@ -89,6 +91,7 @@
 
   Loader.prototype.build = function () {
     var root = this.root = el('div', 'ml-root' + (this.parent ? ' ml-abs' : ''));
+    if (this.theme === 'white') root.className += ' ml-white';
     root.setAttribute('role', 'progressbar');
     root.setAttribute('aria-valuemin', '0');
     root.setAttribute('aria-valuemax', '100');

@@ -16,7 +16,7 @@
   // Simulated loading. ?loop=1 restarts it forever (used by preview.html), ?hold=0.6 freezes the bar at 60%.
   var q = new URLSearchParams(location.search);
   function run() {
-    var loader = MoonyLoader.show();
+    var loader = MoonyLoader.show({ theme: q.get('theme') || undefined });
     var hold = q.get('hold');
     if (hold) { loader.fakeProgress = false; loader.setProgress(+hold); return; }
     var p = 0;

@@ -123,6 +123,23 @@
 }
 .ml-pct.ml-hidden { display: none; }
 
+/* White edition: keep the warm mascot and progress accents on a clean canvas. */
+.ml-root.ml-white { background: #fff; }
+.ml-white .ml-logo { -webkit-filter: brightness(.22); filter: brightness(.22); }
+.ml-white .ml-bar {
+  background: #eeedf2;
+  box-shadow: inset 0 0 0 1px rgba(45, 39, 65, .06);
+}
+.ml-white .ml-pct { color: #686174; }
+.ml-white .ml-glow { opacity: .35; background: radial-gradient(circle, rgba(255, 164, 100, .16), rgba(255, 164, 100, 0) 68%); }
+.ml-white .ml-shadow { background: radial-gradient(ellipse, rgba(63, 45, 75, .15), rgba(63, 45, 75, 0) 70%); }
+.ml-white .ml-stars { opacity: .28; -webkit-filter: brightness(.45) saturate(.5); filter: brightness(.45) saturate(.5); }
+.ml-white .ml-star { background: #a49ab7 !important; box-shadow: none; }
+.ml-white .ml-constel { -webkit-filter: brightness(.65) saturate(1.4); filter: brightness(.65) saturate(1.4); }
+.ml-white .ml-moon { background: #fff; -webkit-filter: brightness(.78) saturate(.7); filter: brightness(.78) saturate(.7); }
+.ml-white .ml-meteor { background: linear-gradient(90deg, rgba(164, 154, 183, 0), #b1a6c4); }
+.ml-white .ml-meteor:after { background: #a49ab7; box-shadow: 0 0 6px rgba(164, 154, 183, .3); }
+
 /* Exit */
 .ml-root.ml-out { opacity: 0; pointer-events: none; }
 .ml-root.ml-out .ml-stage { -webkit-transform: scale(1.05); transform: scale(1.05); }
