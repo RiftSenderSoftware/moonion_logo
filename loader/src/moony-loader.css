@@ -28,19 +28,6 @@
   box-shadow: 0 0 3px 1px rgba(255, 246, 234, .35), 0 0 8px 2px rgba(200, 215, 255, .12);
   -webkit-animation: ml-twinkle 3.2s ease-in-out infinite; animation: ml-twinkle 3.2s ease-in-out infinite;
 }
-/* Crescent: the lit sliver is an inset shadow (set in JS, it scales with the moon);
-   the dark side is opaque so stars don't show through, with a faint earthshine. */
-.ml-moon {
-  position: absolute; display: block; border-radius: 50%;
-  background: radial-gradient(circle at 30% 65%, rgba(255, 232, 210, .09), rgba(255, 232, 210, .03) 70%), #080a1e;
-  -webkit-transform: rotate(-12deg); transform: rotate(-12deg);
-  -webkit-animation: ml-fade 1.4s .1s ease-out both; animation: ml-fade 1.4s .1s ease-out both;
-}
-.ml-constel {
-  position: absolute; display: block;
-  -webkit-animation: ml-fade 1.2s .2s ease-out both; animation: ml-fade 1.2s .2s ease-out both;
-}
-.ml-constel.ml-lit { -webkit-animation: ml-flash .6s ease-out; animation: ml-flash .6s ease-out; }
 .ml-meteor {
   position: absolute; height: 1.5px; border-radius: 2px; opacity: 0;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(200, 220, 255, .35) 60%, #fff);
@@ -143,8 +130,6 @@
 @keyframes ml-twinkle { 0%, 100% { opacity: .35; transform: scale(.8); } 45% { opacity: 1; transform: scale(1); } 60% { opacity: .7; } }
 @-webkit-keyframes ml-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ml-fade { from { opacity: 0; } to { opacity: 1; } }
-@-webkit-keyframes ml-flash { 0% { -webkit-transform: scale(1); -webkit-filter: brightness(1); } 35% { -webkit-transform: scale(1.06); -webkit-filter: brightness(1.7); } 100% { -webkit-transform: scale(1); -webkit-filter: brightness(1); } }
-@keyframes ml-flash { 0% { transform: scale(1); filter: brightness(1); } 35% { transform: scale(1.06); filter: brightness(1.7); } 100% { transform: scale(1); filter: brightness(1); } }
 /* Heading ~156deg: falls down-left. Visible for ~0.8s of every 9s cycle. */
 @-webkit-keyframes ml-meteor {
   0% { opacity: 0; -webkit-transform: rotate(156deg) translateX(0); }

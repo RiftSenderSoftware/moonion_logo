@@ -24,6 +24,8 @@
 <p>Каждое окно — реальный viewport указанного размера, уменьшенный для превью.</p>
 <label><input type="radio" name="mode" value="loop=1" checked> Анимация загрузки</label>
 <label><input type="radio" name="mode" value="hold=0.62"> Стоп на 62%</label>
+<label><input type="checkbox" id="auto-color" checked> Автоматический цвет</label>
+<label>Цвет игры <input type="color" id="theme-color" value="#7484b8" aria-label="Цвет игры"><output id="color-value">#7484b8</output></label>
 <div class="grid" id="grid"></div>
 <script>
   var devices = [
@@ -32,6 +34,15 @@
     ['Square 1:1', 600, 600], ['Small 300×250', 300, 250], ['Desktop 16:9', 1920, 1080]
   ];
   var grid = document.getElementById('grid');
+  var autoColor = document.getElementById('auto-color');
+  var themeColor = document.getElementById('theme-color');
+  var colorValue = document.getElementById('color-value');
+  function updateColor() {
+    colorValue.textContent = themeColor.value;
+    grid.querySelectorAll('iframe').forEach(function (frame) {
+      frame.contentWindow.postMessage({ type: 'moony-preview-color', color: autoColor.checked ? null : themeColor.value }, location.origin);
+    });
+  }
   function render(mode) {
     grid.innerHTML = '';
     devices.forEach(function (d) {
@@ -41,9 +52,12 @@
         '<iframe src="dist/demo.html?' + mode + '" width="' + d[1] + '" height="' + d[2] + '" style="transform:scale(' + scale + ')"></iframe></div>' +
         '<figcaption><b>' + d[0] + '</b> · ' + d[1] + '×' + d[2] + '</figcaption>';
       grid.appendChild(fig);
+      fig.querySelector('iframe').onload = updateColor;
     });
   }
   document.querySelectorAll('input[name=mode]').forEach(function (r) { r.onchange = function () { render(r.value); }; });
+  autoColor.onchange = updateColor;
+  themeColor.oninput = function () { autoColor.checked = false; updateColor(); };
   render('loop=1');
 </script>
 </body>

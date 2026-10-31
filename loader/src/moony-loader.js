@@ -12,13 +12,6 @@
   var STYLE_ID = 'moony-loader-style';
   var LANDSCAPE_FROM = 1.25; // width / height at which the layout switches to a row
 
-  // Fox-head constellation in a unit box, listed in the order the lines get drawn:
-  // nose -> left cheek -> left ear -> brow -> right ear -> right cheek -> back to the nose.
-  var CONSTEL = [[0.5, 1], [0, 0.6], [0.16, 0], [0.38, 0.3], [0.62, 0.3], [0.84, 0], [1, 0.6]];
-  var CONSTEL_EYES = [[0.32, 0.6], [0.68, 0.6]];
-  var CONSTEL_MARK = [0.5, 0.47];  // the forehead sparkle from the mascot
-  var CONSTEL_TILT = -0.08;        // radians, so it reads as a sky pattern rather than an icon
-
   function el(tag, cls, parent) {
     var e = doc.createElement(tag);
     if (cls) e.className = cls;
@@ -65,8 +58,10 @@
     this.minDuration = opts.minDuration == null ? 1200 : opts.minDuration;
     this.fakeProgress = opts.fakeProgress !== false;
     this.showPercent = opts.showPercent !== false;
-    this.starDensity = opts.starDensity == null ? 1 : opts.starDensity;
-    this.meteors = opts.meteors !== false;
+    this.starDensity = opts.starDensity == null ? 0.35 : opts.starDensity;
+    this.meteors = opts.meteors === true;
+    this.autoTheme = opts.autoTheme !== false;
+    this.themeColor = opts.themeColor;
     this.onHidden = opts.onHidden || null;
 
     this.real = 0;
@@ -95,9 +90,6 @@
 
     var sky = el('div', 'ml-sky', root);
     this.canvas = el('canvas', 'ml-stars', sky);
-    this.constel = el('canvas', 'ml-constel', sky);
-    this.moon = el('i', 'ml-moon', sky);
-    this._drawn = -1;
 
     // A few brighter stars twinkle on top of the static canvas field
     var rnd = random(3);
@@ -144,6 +136,9 @@
     win.addEventListener('resize', this._onResize);
     win.addEventListener('orientationchange', this._onResize);
     this.layout();
+    this.updateTheme();
+    var self = this;
+    if (this.autoTheme && !this.themeColor) this._themeTimer = setInterval(function () { self.updateTheme(); }, 1200);
     raf(this._tick);
   };
 
@@ -180,8 +175,6 @@
     px(this.logo, { width: col, height: col * LOGO_RATIO });
     px(this.bar, { width: barW, height: barH, marginTop: fox * 0.13 });
     px(this.pct, { fontSize: fs, marginTop: barH + fs * 0.5 });
-    this.placeConstellation(w, h, landscape);
-    this.placeMoon(w, h, landscape);
   };
 
   // Static night sky on a canvas: a faint Milky Way band plus a field of stars whose sizes,
@@ -245,108 +238,62 @@
     if (this.meteor) this.meteor.style.width = Math.round(clamp(Math.min(w, h) * 0.28, 70, 220)) + 'px';
   };
 
-  // The constellation sits in the largest free patch of sky: above the content on portrait,
-  // to the right of it on landscape. On cramped screens (e.g. 300x250) it is skipped.
-  Loader.prototype.placeConstellation = function (w, h, landscape) {
-    var c = this.constel, hero = this.hero, info = this.info, s, cx, cy;
-    if (landscape) {
-      var right = Math.max(hero.offsetLeft + hero.offsetWidth, info.offsetLeft + info.offsetWidth), rw = w - right;
-      s = Math.min(rw * 0.6, h * 0.42, Math.min(w, h) * 0.34);
-      cx = right + rw * 0.5;
-      cy = Math.max(h * 0.27, s * 0.62);
-    } else {
-      var top = Math.min(hero.offsetTop, info.offsetTop);
-      s = Math.min(w * 0.42, top * 0.62, Math.min(w, h) * 0.34);
-      cx = w * 0.5;
-      cy = top * 0.5;
+  // Read host colours only; unreadable or empty game canvases fall back to page styling.
+  Loader.prototype.updateTheme = function () {
+    var sample = doc.createElement('canvas'); sample.width = sample.height = 24;
+    var ctx = sample.getContext('2d');
+    if (!ctx || this.destroyed) return;
+    var rgb = null, scope = this.parent || doc, canvases = scope.querySelectorAll('canvas');
+    var buckets = {}, best = 0;
+    if (this.autoTheme && !this.themeColor) {
+      for (var i = 0; i < canvases.length; i++) {
+        var canvas = canvases[i];
+        if (this.root.contains(canvas) || !canvas.width || !canvas.height) continue;
+        try {
+          ctx.clearRect(0, 0, 24, 24); ctx.drawImage(canvas, 0, 0, 24, 24);
+          var data = ctx.getImageData(0, 0, 24, 24).data;
+          for (var j = 0; j < data.length; j += 4) {
+            var r = data[j], g = data[j + 1], b = data[j + 2];
+            if (data[j + 3] < 180 || Math.max(r,g,b) - Math.min(r,g,b) < 18) continue;
+            var key = (r >> 5) + ',' + (g >> 5) + ',' + (b >> 5);
+            var bin = buckets[key] || (buckets[key] = { n: 0, r: 0, g: 0, b: 0 });
+            bin.n++; bin.r += r; bin.g += g; bin.b += b;
+            if (bin.n > best) { best = bin.n; rgb = [bin.r / best, bin.g / best, bin.b / best]; }
+          }
+        } catch (e) { /* Cross-origin canvas: retain the page fallback. */ }
+      }
     }
-    if (s < 60) { c.style.display = 'none'; this._cs = 0; return; }
-
-    var pad = Math.round(s * 0.22), dpr = Math.min(win.devicePixelRatio || 1, 2);
-    var cw = s + pad * 2, ch = s * 0.95 + pad * 2;
-    c.style.display = 'block';
-    c.width = Math.round(cw * dpr); c.height = Math.round(ch * dpr);
-    px(c, { width: cw, height: ch, left: cx - cw / 2, top: cy - ch / 2 });
-    this._cs = s; this._cpad = pad; this._cdpr = dpr;
-    this.drawConstellation();
-  };
-
-  // Moon that waxes with loading: starts as the mascot's crescent, becomes full at 100%.
-  // It goes in the corner opposite the constellation: top-right on portrait, top-left on landscape.
-  Loader.prototype.placeMoon = function (w, h, landscape) {
-    var m = this.moon, d = clamp(Math.min(w, h) * 0.105, 24, 100), x, y;
-    if (landscape) {
-      x = w * 0.06; y = h * 0.1;
-    } else {
-      var top = Math.min(this.hero.offsetTop, this.info.offsetTop);
-      x = w * 0.9 - d; y = Math.max(12, top * 0.16);
-      if (top < d * 1.8) { m.style.display = 'none'; return; }
+    if (!rgb) {
+      // A tainted sampling canvas must be replaced before parsing CSS colours.
+      sample.width = 24; ctx = sample.getContext('2d');
+      var meta = doc.querySelector('meta[name="theme-color"]');
+      var colors = this.themeColor ? [this.themeColor] : [];
+      if (this.autoTheme && !this.themeColor) {
+        if (meta) colors.push(meta.content);
+        var game = scope.querySelector('#unity-canvas, #game, #unity-container, canvas') || this.parent || doc.body;
+        while (game && game.nodeType === 1 && win.getComputedStyle) {
+          colors.push(win.getComputedStyle(game).backgroundColor); game = game.parentNode;
+        }
+      }
+      for (var k = 0; k < colors.length; k++) {
+        ctx.clearRect(0,0,24,24); ctx.fillStyle = 'rgba(0,0,0,0)'; ctx.fillStyle = colors[k]; ctx.fillRect(0,0,1,1);
+        var c = ctx.getImageData(0,0,1,1).data;
+        if (c[3] > 180 && Math.max(c[0],c[1],c[2]) - Math.min(c[0],c[1],c[2]) > 12) { rgb = c; break; }
+      }
     }
-    m.style.display = 'block';
-    px(m, { width: d, height: d, left: x, top: y });
-    this._moonD = d;
-    this.drawMoon();
-  };
-
-  // The lit part is an inset shadow: disc minus the same disc shifted along the light direction.
-  // A small shift gives a thin crescent, a shift of one diameter lights the whole disc.
-  Loader.prototype.drawMoon = function () {
-    var d = this._moonD, p = this.shown;
-    if (!d) return;
-    var shift = d * (0.26 + 0.76 * p), glow = 0.25 + p * 0.2, halo = 0.14 + p * 0.16;
-    this.moon.style.boxShadow = 'inset ' + (shift * 0.923).toFixed(1) + 'px ' + (-shift * 0.385).toFixed(1) + 'px 0 0 #fff1e0, ' +
-      '0 0 ' + (d * 0.35).toFixed(1) + 'px rgba(255, 214, 170, ' + glow.toFixed(2) + '), ' +
-      '0 0 ' + (d * 1.2).toFixed(1) + 'px rgba(255, 150, 90, ' + halo.toFixed(2) + ')';
-  };
-
-  // Lines connect star by star as loading progresses; the eyes and the forehead sparkle light up last.
-  Loader.prototype.drawConstellation = function () {
-    var c = this.constel, ctx = c.getContext && c.getContext('2d'), s = this._cs;
-    this._drawn = this.shown;
-    if (!ctx || !s) return;
-    var dpr = this._cdpr, pad = this._cpad, H = 0.95, n = CONSTEL.length, i, a, b, f;
-    var t = this.shown * (n + 1);
-    function pt(q) { return [q[0] * s, q[1] * s * H]; }
-    function star(p, lit, r) {
-      ctx.shadowBlur = lit * s * 0.07 * dpr;
-      ctx.fillStyle = 'rgba(255,' + Math.round(240 - lit * 12) + ',' + Math.round(226 - lit * 26) + ',' + (0.3 + lit * 0.7).toFixed(2) + ')';
-      ctx.beginPath(); ctx.arc(p[0], p[1], r * (0.6 + lit * 0.4), 0, 6.2832); ctx.fill();
-    }
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, c.width, c.height);
-    ctx.translate(pad + s / 2, pad + s * H / 2);
-    ctx.rotate(CONSTEL_TILT);
-    ctx.translate(-s / 2, -s * H / 2);
-    ctx.shadowColor = 'rgba(255, 112, 40, .95)';
-
-    ctx.lineCap = 'round';
-    ctx.lineWidth = Math.max(1, s * 0.008);
-    ctx.strokeStyle = 'rgba(255, 138, 70, .7)';
-    ctx.shadowBlur = s * 0.035 * dpr;
-    ctx.beginPath();
-    for (i = 0; i < n; i++) {
-      f = clamp(t - i, 0, 1);
-      if (!f) break;
-      a = pt(CONSTEL[i]); b = pt(CONSTEL[(i + 1) % n]);
-      ctx.moveTo(a[0], a[1]);
-      ctx.lineTo(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f);
-    }
-    ctx.stroke();
-
-    var r = Math.max(1.5, s * 0.022);
-    for (i = 0; i < n; i++) star(pt(CONSTEL[i]), clamp((t - i) * 3, 0, 1), r);
-    var e = clamp(t - n, 0, 1);
-    for (i = 0; i < CONSTEL_EYES.length; i++) star(pt(CONSTEL_EYES[i]), e, r * 0.85);
-
-    // Four-point sparkle, same motif as on the fox's forehead
-    var m = pt(CONSTEL_MARK), k = s * 0.075 * (0.55 + e * 0.45), q = k * 0.22;
-    ctx.shadowBlur = e * s * 0.09 * dpr;
-    ctx.fillStyle = 'rgba(255, 244, 232, ' + (0.22 + e * 0.78).toFixed(2) + ')';
-    ctx.beginPath();
-    ctx.moveTo(m[0], m[1] - k); ctx.lineTo(m[0] + q, m[1] - q); ctx.lineTo(m[0] + k, m[1]); ctx.lineTo(m[0] + q, m[1] + q);
-    ctx.lineTo(m[0], m[1] + k); ctx.lineTo(m[0] - q, m[1] + q); ctx.lineTo(m[0] - k, m[1]); ctx.lineTo(m[0] - q, m[1] - q);
-    ctx.closePath(); ctx.fill();
+    rgb = rgb || [116,132,184];
+    var r = rgb[0]/255, g = rgb[1]/255, b = rgb[2]/255;
+    var max = Math.max(r,g,b), min = Math.min(r,g,b), d = max-min, h = 225;
+    if (d) h = (max === r ? (g-b)/d + (g < b ? 6 : 0) : max === g ? (b-r)/d + 2 : (r-g)/d + 4) * 60;
+    h = Math.round(h/5)*5;
+    if (h === this._themeHue) return;
+    this._themeHue = h;
+    function color(s,l) { return 'hsl(' + h + ',' + s + '%,' + l + '%)'; }
+    this.root.style.background = 'radial-gradient(ellipse at 50% 100%, ' + color(24,21) + ', transparent 75%), linear-gradient(' + color(22,7) + ', ' + color(25,13) + ')';
+    this.fill.style.background = 'linear-gradient(90deg, ' + color(38,53) + ', ' + color(48,74) + ')';
+    this.fill.style.boxShadow = '0 0 12px ' + color(28,36);
+    this.glow.style.background = 'radial-gradient(circle, hsla(' + h + ',40%,65%,.22), transparent 68%)';
+    this.pct.style.color = color(20,78);
   };
 
   Loader.prototype.tick = function (t) {
@@ -367,17 +314,8 @@
       this.pct.textContent = p + '%';
       this.root.setAttribute('aria-valuenow', p);
     }
-    if (Math.abs(this.shown - this._drawn) > 0.0015 || (this.shown >= 1 && this._drawn < 1)) {
-      this.drawConstellation();
-      this.drawMoon();
-    }
-
-    // Let the completed constellation flash before fading out
-    if (this.shown >= 1 && !this._fullAt) {
-      this._fullAt = now();
-      this.constel.className += ' ml-lit';
-    }
-    if (this.finishing && this._fullAt && now() - this._fullAt >= 550 && now() - this.started >= this.minDuration) return this.hide();
+    if (this.shown >= 1 && !this._fullAt) this._fullAt = now();
+    if (this.finishing && this._fullAt && now() - this._fullAt >= 220 && now() - this.started >= this.minDuration) return this.hide();
     raf(this._tick);
   };
 
@@ -406,6 +344,7 @@
   Loader.prototype.destroy = function () {
     if (this.destroyed) return;
     this.destroyed = true;
+    clearInterval(this._themeTimer);
     win.removeEventListener('resize', this._onResize);
     win.removeEventListener('orientationchange', this._onResize);
     if (this.root.parentNode) this.root.parentNode.removeChild(this.root);

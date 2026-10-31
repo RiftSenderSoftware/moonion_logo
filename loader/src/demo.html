@@ -15,8 +15,20 @@
 <script>
   // Simulated loading. ?loop=1 restarts it forever (used by preview.html), ?hold=0.6 freezes the bar at 60%.
   var q = new URLSearchParams(location.search);
+  var previewColor = null;
+  window.addEventListener('message', function (event) {
+    if (event.origin !== location.origin || event.source !== window.parent || !event.data || event.data.type !== 'moony-preview-color') return;
+    var color = event.data.color;
+    if (color !== null && (typeof color !== 'string' || !/^#[0-9a-f]{6}$/i.test(color))) return;
+    previewColor = color;
+    var loader = MoonyLoader.current;
+    if (loader && !loader.destroyed) {
+      loader.themeColor = color;
+      loader.updateTheme();
+    }
+  });
   function run() {
-    var loader = MoonyLoader.show();
+    var loader = MoonyLoader.show({ themeColor: previewColor });
     var hold = q.get('hold');
     if (hold) { loader.fakeProgress = false; loader.setProgress(+hold); return; }
     var p = 0;
